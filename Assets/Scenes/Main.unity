@@ -939,9 +939,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   adPlatformType: 0
-  AppId: 
-  videoAdIdList: []
-  interAdIdList: []
+  AppId: tt1ede686380a0448002
+  videoAdIdList:
+  - 13a9ij4f853g9a1abm
+  interAdIdList:
+  - 267opbvkyti6chi55t
 --- !u!4 &173435431
 Transform:
   m_ObjectHideFlags: 0
@@ -6284,6 +6286,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   btnContinue: {fileID: 1290582036}
   chooseModePopup: {fileID: 1122872289}
+  btnMore: {fileID: 0}
 --- !u!1 &1175976969
 GameObject:
   m_ObjectHideFlags: 0

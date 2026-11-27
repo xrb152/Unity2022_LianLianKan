@@ -14,6 +14,9 @@
 /tt-minigame/
 /webgl/
 /[Bb]uild[Ww]eb[Gg][Ll]/
+# TTSDK 构建面板会在工程根目录落模板（appid 为空、非最终产物，真正产物在 tt-minigame/tt-minigame/）
+/game.json
+/project.config.json
 
 # Unity 会为每个 Assets 文件生成 .meta，这些必须入库
 !/[Aa]ssets/**/*.meta

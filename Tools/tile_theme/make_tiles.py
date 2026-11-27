@@ -250,10 +250,12 @@ def i_bridge(d):
 
 
 def i_tile(d):
-    arc(d, 128, 152, 68, 180, 360, CORAL, 22)
-    arc(d, 128, 178, 68, 180, 360, CORAL_D, 10)
-    line(d, [(62, 152), (62, 184)], CORAL, 7)
-    line(d, [(194, 152), (194, 184)], CORAL, 7)
+    # 瓦：两排交错的半圆瓦当。单道拱弧会跟"雨"里的云、跟石桥撞脸
+    for cy, xs, col, rim in ((200, (78, 128, 178), CORAL, CORAL_D),
+                             (168, (103, 153), CORAL_D, CORAL)):
+        for cx in xs:
+            pieslice(d, cx - 30, cy - 30, cx + 30, cy + 30, 180, 360, col)
+            arc(d, cx, cy, 21, 190, 350, rim, 5)
 
 
 def i_caltrop(d):
@@ -262,8 +264,11 @@ def i_caltrop(d):
 
 
 def i_dew(d):
-    poly(d, [(128, 56), (170, 128), (160, 176), (96, 176), (86, 128)], TEAL_L)
-    ell(d, 108, 112, 13, 17, WHITE, ow=X(1))
+    poly(d, [(120, 58), (162, 130), (152, 176), (88, 176), (78, 130)], TEAL)
+    ell(d, 100, 116, 12, 16, WHITE, ow=X(1))
+    # 一颗容易被当成"水滴"，补一颗小的才读得出是"露"
+    ell(d, 186, 168, 21, 21, TEAL_L, ow=X(2))
+    ell(d, 179, 161, 6, 6, WHITE, ow=X(1))
 
 
 def i_moon(d):
@@ -288,20 +293,28 @@ def i_cloud(d):
 
 
 def i_rain(d):
-    ell(d, 128, 104, 38, 30, BLUE)
-    ell(d, 92, 116, 26, 21, BLUE, ow=X(3))
-    ell(d, 164, 116, 26, 21, BLUE, ow=X(3))
-    for x in (98, 128, 158):
-        line(d, [(x, 146), (x - 5, 180)], BLUE_D, 7)
+    # 三个圆如果各自描边，看着像一排蘑菇；先铺一遍"描边色"的整体轮廓，再铺云体
+    bumps = [(128, 106, 40, 32), (92, 120, 27, 22), (166, 120, 27, 22)]
+    for (cx, cy, rx, ry) in bumps:
+        ell(d, cx, cy, rx + 4, ry + 4, INK)
+    rrect(d, 62, 118, 194, 156, 18, INK)
+    for (cx, cy, rx, ry) in bumps:
+        ell(d, cx, cy, rx, ry, BLUE)
+    rrect(d, 66, 122, 190, 152, 14, BLUE)
+    for x in (96, 128, 160):
+        line(d, [(x, 158), (x - 6, 190)], BLUE_D, 7)
 
 
 def i_bird(d):
-    ell(d, 124, 142, 42, 26, WHITE)
-    line(d, [(150, 122), (184, 92)], WHITE, 9)
-    ell(d, 190, 86, 12, 10, WHITE, ow=X(2.5))
-    line(d, [(198, 84), (216, 88)], GOLD, 5)
-    line(d, [(110, 162), (106, 208)], GOLD, 5)
-    line(d, [(132, 164), (134, 210)], GOLD, 5)
+    # 身子用淡青、颈头用深青：纯白描边在玉白底板上等于没有
+    ell(d, 124, 142, 42, 26, TEAL_L)
+    ell(d, 116, 136, 24, 14, WHITE, ow=X(1))
+    line(d, [(148, 126), (180, 96)], TEAL, 9)
+    ell(d, 188, 88, 13, 11, TEAL, ow=X(2.5))
+    ell(d, 192, 85, 4, 4, WHITE, ow=X(1))
+    line(d, [(199, 86), (217, 90)], GOLD, 5)
+    line(d, [(110, 160), (106, 200)], GOLD, 5)
+    line(d, [(132, 162), (134, 204)], GOLD, 5)
 
 
 def i_snail(d):

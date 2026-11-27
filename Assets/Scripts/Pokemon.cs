@@ -73,7 +73,7 @@ public class Pokemon : MonoBehaviour {
 			back.SetActive (true);
 			GetComponent<SpriteRenderer>().sprite = sprite;
 			localScale = new Vector3(Mathf.Abs(Map.CELL_WIDH * 1.0f / sprite.bounds.size.x), Mathf.Abs (- Map.CELL_HEIGHT * 1.0f / sprite.bounds.size.y), 1);
-			if (Save.getUsedPack () % 3 == Const.UI_DEFAULT_FAKE) {
+			if (!TileThemeManager.HasTheme && Save.getUsedPack () % 3 == Const.UI_DEFAULT_FAKE) {
 				localScale = localScale * 29.8f/40f;
 			}
 		} else {
@@ -89,7 +89,7 @@ public class Pokemon : MonoBehaviour {
 			back.SetActive (true);
 			GetComponent<SpriteRenderer>().sprite = sprite;
 			localScale = new Vector3(Mathf.Abs(Map.CELL_WIDH * 1.0f / sprite.bounds.size.x), Mathf.Abs (- Map.CELL_HEIGHT * 1.0f / sprite.bounds.size.y), 1);
-			if (Save.getUsedPack () % 2 == Const.UI_DEFAULT_KAWAI) {
+			if (!TileThemeManager.HasTheme && Save.getUsedPack () % 2 == Const.UI_DEFAULT_KAWAI) {
 				localScale = localScale * 29.8f/40f;
 			}
 		}
@@ -306,6 +306,11 @@ public class Pokemon : MonoBehaviour {
 	}
 	public Sprite GetSprite(string spriteName)
 	{
+		// 主题优先：命中就用主题图；主题没覆盖的（stone3d/Crate/IceBox 等）回落到场景列表
+		Sprite themed = TileThemeManager.GetSprite (spriteName);
+		if (themed != null)
+			return themed;
+
 		foreach(Sprite sprite in sprites)
 		{
 			if (sprite!=null && sprite.name == spriteName)

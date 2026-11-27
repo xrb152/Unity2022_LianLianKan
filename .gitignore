@@ -1,0 +1,66 @@
+# ===== Unity 生成目录（必忽略） =====
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Rr]ecordings/
+/[Ss]erverCache/
+/MemoryCaptures/
+
+# 抖音小游戏打包产物（可随时重新构建）
+/tt-minigame/
+/webgl/
+/[Bb]uild[Ww]eb[Gg][Ll]/
+
+# Unity 会为每个 Assets 文件生成 .meta，这些必须入库
+!/[Aa]ssets/**/*.meta
+
+# ===== 本地备份 / 工具缓存（不入库） =====
+/Backup/
+/.workbuddy/
+
+# ===== IDE / 系统文件 =====
+.vs/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+
+# ===== Unity / VS 自动生成的工程文件 =====
+ExportedObj/
+.consulo/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Unity 崩溃报告 / 构建产物
+sysinfo.txt
+crashlytics-build.properties
+*.apk
+*.aab
+*.app
+*.unitypackage
+
+# Unity 生成的 meta（编辑器缓存，非资源 meta）
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Addressables 自动构建产物
+/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
+/[Aa]ssets/[Ss]treamingAssets/aa.meta

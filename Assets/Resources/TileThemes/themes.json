@@ -1,5 +1,6 @@
 {
-  "defaultTheme": "",
+  "defaultTheme": "xianzhou",
   "themes": [
+    { "id": "xianzhou", "name": "闲舟静泛清波·莲池" }
   ]
 }

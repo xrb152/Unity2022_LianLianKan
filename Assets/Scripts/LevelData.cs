@@ -8,6 +8,10 @@ public class LevelData {
 	public float time_star2;
 	public float time_star3;
 
+	// 本关发放的提示 / 洗牌数量。-1 表示关卡 JSON 没写，由 GameConfig.getDefaultHint/getDefaultRandom 按难度兜底。
+	public int num_hint = -1;
+	public int num_random = -1;
+
 	public ArrayList list_auto_gen 				 = new ArrayList();
 	public ArrayList list_block_pokemon_fixed	 = new ArrayList();
 	public ArrayList list_block_stone_fixed 	 = new ArrayList();
@@ -57,6 +61,11 @@ public class LevelData {
 			list_block_stone_and_frozen.Clear ();
 			list_constraint.Clear();
 			list_reward.Clear();
+			//本关道具（可选字段，不写就按难度兜底）
+			JSONNode node_hint = data [StringUtils.num_hint];
+			JSONNode node_random = data [StringUtils.num_random];
+			num_hint = node_hint != null ? node_hint.AsInt : -1;
+			num_random = node_random != null ? node_random.AsInt : -1;
 			//time constraint
 			time_dead  = float.Parse (data [StringUtils.time_dead]);
 			time_star1 = float.Parse (data [StringUtils.time_star_1]);

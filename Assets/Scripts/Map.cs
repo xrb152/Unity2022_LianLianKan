@@ -93,11 +93,10 @@ public class Map : MonoBehaviour
 		LPath = new ArrayList ();
 		keyLPath = new ArrayList ();
 		LMap(row, col);
+		hideChangeButtons ();
 		if (isTutorial) {
 			logicLevel.setLevelForTutorial();
-			if (Save.getTutorialChangeUI() == 0) {
-				tutorialObj.SetActive(true);
-			}
+			// 换卡按钮已经下掉，当初指向它的那个一次性手指提示（tutorialObj）也不再弹了
 		} else {
 			logicLevel.setLevel (GameStatic.currentLevel);
 		}
@@ -2239,7 +2238,31 @@ public class Map : MonoBehaviour
 		return listAfter;
 	}
 
+	/// <summary>
+	/// 隐藏「换一套卡片」按钮（SettingBar 里那个 btnChange / Change 对象）。
+	/// 卡片现在由 TileThemeManager 统一提供，只有主题这一套，三皮肤轮换已经没有意义；
+	/// 按钮留着玩家点了只会看到画面闪一下，属于「点了没反应」的虚假按钮。
+	///
+	/// 场景里也把它标成 inactive 了，但 Unity 编辑器不重读磁盘上的场景文件，
+	/// 这里按名字兜底扫一遍（只认挂着 Button 的 Change，避免误伤同名的纯文本节点）。
+	/// </summary>
+	void hideChangeButtons() {
+		Canvas[] canvases = UnityEngine.Object.FindObjectsOfType<Canvas> ();
+		for (int i = 0; i < canvases.Length; i++) {
+			Transform[] all = canvases [i].GetComponentsInChildren<Transform> (true);
+			for (int j = 0; j < all.Length; j++) {
+				if (all [j].name != "Change")
+					continue;
+				if (all [j].GetComponent<UnityEngine.UI.Button> () == null)
+					continue;
+				all [j].gameObject.SetActive (false);
+			}
+		}
+	}
+
 	public void changeUI(){
+		// 按钮已隐藏，这里保留是为了不让场景里 Button.onClick 的引用变成 Missing。
+		// 真要恢复三套卡片皮肤，把 hideChangeButtons() 去掉即可。
 		int usePack = Save.getUsedPack ();
 		if (Save.isShowClassicUI ()) {
 			Save.usePack (++usePack % 3);
@@ -2248,7 +2271,8 @@ public class Map : MonoBehaviour
 		}
 		reloadUI ();
 		Save.saveTutorialChangeUI(1);
-		tutorialObj.SetActive(false);
+		if (tutorialObj != null)
+			tutorialObj.SetActive(false);
 	}
 
 	//for ads banner

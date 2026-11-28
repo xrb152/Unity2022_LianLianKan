@@ -2,8 +2,9 @@
 using UnityEngine.UI;
 
 /// <summary>
-/// 商店面板：用钻石（HUD 右上角）购买关卡道具。
-/// 三张卡分别对应 提示 / 洗牌 / 体力，价格和数量都在 Inspector 里可调。
+/// 商店面板：用钻石（HUD 右上角）购买关卡资源。
+/// 提示 / 洗牌改成每关由关卡发放（见 LogicLevel.applyLevelItems），这里默认只卖体力；
+/// 需要恢复售卖时把 sellHint / sellRandom 勾上。价格和数量都在 Inspector 里可调。
 /// 钻石余额沿用 Save.getPlayerCoin()（这个值就是右上角 RubyInfo 显示的数字）。
 /// </summary>
 public class StoreController2 : MonoBehaviour
@@ -31,9 +32,48 @@ public class StoreController2 : MonoBehaviour
     public Text costItem2;
     public Text costItem3;
 
+    [Header("是否售卖提示 / 洗牌")]
+    [Tooltip("提示和洗牌改成每关由关卡发放（见 LogicLevel.applyLevelItems），再卖就等于白收钻石，默认下架。")]
+    public bool sellHint = false;
+    public bool sellRandom = false;
+
     private void Start()
     {
+        applyCardPolicy();
         RefreshUI();
+    }
+
+    /// <summary>
+    /// 下架提示 / 洗牌两张卡；只剩体力一张时把它挪回中间，避免偏在右边。
+    /// 卡片根节点从 Inspector 绑定的文本往上找，没绑定时按名字兜底。
+    /// </summary>
+    private void applyCardPolicy()
+    {
+        if (sellHint && sellRandom) return;
+
+        GameObject card1 = findCard(numItem1, "Item1");
+        GameObject card2 = findCard(numItem2, "Item2");
+        GameObject card3 = findCard(numItem3, "Item3");
+
+        if (!sellHint && card1 != null) card1.SetActive(false);
+        if (!sellRandom && card2 != null) card2.SetActive(false);
+
+        if (!sellHint && !sellRandom && card3 != null)
+        {
+            RectTransform rt = card3.GetComponent<RectTransform>();
+            if (rt != null) rt.anchoredPosition = new Vector2(0f, rt.anchoredPosition.y);
+        }
+    }
+
+    private static GameObject findCard(Text label, string cardName)
+    {
+        Transform t = label != null ? label.transform : null;
+        while (t != null)
+        {
+            if (t.name == cardName) return t.gameObject;
+            t = t.parent;
+        }
+        return GameObject.Find(cardName);
     }
 
     /// <summary>把配置里的数量/价格写到卡片上。</summary>
@@ -67,6 +107,10 @@ public class StoreController2 : MonoBehaviour
 
     private void Buy(ItemController.ItemType itemType, int amount, int gemCost)
     {
+        // 已下架的商品即使被脚本调到这里也不卖
+        if (itemType == ItemController.ItemType.hint && !sellHint) return;
+        if (itemType == ItemController.ItemType.random && !sellRandom) return;
+
         int gem = Save.getPlayerCoin();
         if (gem < gemCost)
         {

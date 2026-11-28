@@ -19,6 +19,25 @@ public class GameConfig {
 	public static int default_num_random_event  = 10;
 	public static int num_hint_bonus = 10;
 	public static int num_random_bonus = 10;
+
+	/// <summary>
+	/// 按模式取每关的基础提示数量。关卡 JSON 里写了 num_hint 就用关卡的，没写才走这里。
+	/// 道具改成「每关重置、关卡说了算」之后，这是唯一的兜底来源。
+	/// </summary>
+	public static int getDefaultHint(int mode) {
+		if (mode == Const.GAME_MODE_HARD1) return default_num_hint_hard1;
+		if (mode == Const.GAME_MODE_HARD2) return default_num_hint_hard2;
+		if (mode == Const.GAME_MODE_EVENT) return default_num_hint_event;
+		return default_num_hint_normal;
+	}
+
+	/// <summary>按模式取每关的基础洗牌数量，规则同 getDefaultHint。</summary>
+	public static int getDefaultRandom(int mode) {
+		if (mode == Const.GAME_MODE_HARD1) return default_num_random_hard1;
+		if (mode == Const.GAME_MODE_HARD2) return default_num_random_hard2;
+		if (mode == Const.GAME_MODE_EVENT) return default_num_random_event;
+		return default_num_random_normal;
+	}
 	public static int num_coin_recover_life_base = 5; //So luong coin nho nhat dung de hoi sinh sau khi thua
 	public static int probability_ads_visible = 100;
 	public static int small_count = 20;	//So luong coin ban trong store cho cac goi

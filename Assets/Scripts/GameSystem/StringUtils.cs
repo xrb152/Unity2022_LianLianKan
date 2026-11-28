@@ -31,6 +31,8 @@ public class StringUtils : MonoBehaviour{
 	public static string random 			= "random";
 	public static string energy 			= "energy";
 	public static string reward 			= "reward"; 
+	public static string num_hint 			= "num_hint";
+	public static string num_random 		= "num_random";
 	public static string type				= "type";
 	public static string id 				= "id";
 	public static string player_coin        = "player_coin";

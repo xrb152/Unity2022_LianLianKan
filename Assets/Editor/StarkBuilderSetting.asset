@@ -56,7 +56,7 @@ MonoBehaviour:
   version: 
   autoVersion: 0
   _webglPackagePath: 
-  _orientation: 0
+  _orientation: 1
   _iOSPerformancePlus: 0
   _menuButtonStyle: 0
   _publishType: 0

@@ -22,6 +22,11 @@ public class EnergyHudText : MonoBehaviour
     [Header("在线恢复结算间隔（秒）")]
     public float recoverInterval = 5f;
 
+    [Header("jiliBtn / cebianBtn 贴屏幕左右边缘")]
+    public bool anchorEdgeButtons = true;
+    public float jiliRightMargin = 16f;
+    public float cebianLeftMargin = 14f;
+
     const string BAR_PATH = "Images/MainUI/energynumber";
     const string PLUS_PATH = "Images/MainUI/btnAddcoin";
 
@@ -32,8 +37,42 @@ public class EnergyHudText : MonoBehaviour
     void Start()
     {
         EnsureUI();
+        if (anchorEdgeButtons)
+            AnchorEdgeButtons();
         nextRecover = Time.unscaledTime + recoverInterval;
         Refresh(true);
+    }
+
+    /// <summary>
+    /// 两个角落按钮贴屏幕左右边缘：jiliBtn（领奖）靠右、cebianBtn（侧边栏）靠左。
+    /// 场景里已经是边缘锚点了，这里再兜一次——Unity 编辑器不重读磁盘上的场景，
+    /// 主界面开着的时候只改 YAML，Play 起来还是旧的中点锚点。
+    /// 位置按「缩放后的实际宽度 + 固定边距」算，以后换图、改 LocalScale 都不用再对数字。
+    /// </summary>
+    void AnchorEdgeButtons()
+    {
+        AnchorEdge("jiliBtn", 1f, jiliRightMargin, 64f);
+        AnchorEdge("cebianBtn", 0f, cebianLeftMargin, 0f);
+    }
+
+    /// <summary>side = 0 贴左、1 贴右；y 是相对竖直中心的偏移。</summary>
+    static void AnchorEdge(string name, float side, float margin, float y)
+    {
+        GameObject go = GameObject.Find(name);
+        if (go == null)
+            return;
+        RectTransform rt = go.transform as RectTransform;
+        if (rt == null)
+            return;
+
+        // 锚点改成同一个点之后，rect.size 就等于 sizeDelta，先取再改
+        float visualHalf = rt.rect.size.x * Mathf.Abs(rt.localScale.x) * 0.5f;
+        float offset = margin + visualHalf;
+
+        rt.anchorMin = new Vector2(side, 0.5f);
+        rt.anchorMax = new Vector2(side, 0.5f);
+        rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.anchoredPosition = new Vector2(side > 0.5f ? -offset : offset, y);
     }
 
     void OnEnable()

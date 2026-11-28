@@ -31,7 +31,6 @@ public class LogicLevel : MonoBehaviour {
 		}
 		levelData = null;
 		levelData = new LevelData (level);
-		applyLevelItems ();
 		if (timeBar) {
 			if (GameStatic.mapData != null) {
 				float currentTime = GameStatic.mapData ["current_time"].AsFloat;
@@ -48,24 +47,6 @@ public class LogicLevel : MonoBehaviour {
 		if(scoreBar) {
 			scoreBar.setInfo(level, GameStatic.currentScore);
 		}
-	}
-
-	/// <summary>
-	/// 关卡说了算：每关开始时把提示 / 洗牌重置成「本关定量 + 上一关攒下的奖励」。
-	/// 关卡 JSON 写了 num_hint / num_random 就用关卡的值，没写按模式难度兜底
-	/// （GameConfig.getDefaultHint / getDefaultRandom）。奖励在这里一次性用掉，用完清零。
-	/// </summary>
-	void applyLevelItems() {
-		if (levelData == null)
-			return;
-		int hint = levelData.num_hint >= 0 ? levelData.num_hint : GameConfig.getDefaultHint (GameStatic.currentMode);
-		int random = levelData.num_random >= 0 ? levelData.num_random : GameConfig.getDefaultRandom (GameStatic.currentMode);
-		hint += GameStatic.pendingHint;
-		random += GameStatic.pendingRandom;
-		GameStatic.pendingHint = 0;
-		GameStatic.pendingRandom = 0;
-		ItemController.setHintItem (hint);
-		ItemController.setRandomItem (random);
 	}
 
 	public void setLevelForTutorial() {
@@ -138,15 +119,14 @@ public class LogicLevel : MonoBehaviour {
 			RewardData reward = (RewardData) levelData.list_reward [i];
 			if (reward.type == Const.REWARD_HINT) {
 				int reward_hint = reward.getReward (star);
-				// 奖励先记账，等下一关 applyLevelItems 重算道具时再加进去，
-				// 否则「每关重置为关卡定量」会把刚发的奖励冲掉。
-				GameStatic.pendingHint += reward_hint;
+				// 道具是账号资源，奖励直接加到存档里，下一关接着用
+				ItemController.addHintItem (reward_hint);
 				if (resultBar) {
 					resultBar.txtHint.text = "+" + reward_hint;
 				}
 			} else if (reward.type == Const.REWARD_RANDOM) {
 				int reward_random = reward.getReward (star);
-				GameStatic.pendingRandom += reward_random;
+				ItemController.addRandomItem (reward_random);
 				if (resultBar) {
 					resultBar.txtRandom.text = "+" + reward_random;
 				}

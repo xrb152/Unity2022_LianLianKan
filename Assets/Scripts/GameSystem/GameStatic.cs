@@ -60,10 +60,6 @@ public class GameStatic : MonoBehaviour {
 	public static int currentLevel = 1;
 	public static int currentHint = 10;
 	public static int currentRandom = 10;
-	// 关卡通关奖励的提示/洗牌：先记在这里，等下一关 setLevel 重算道具时一起加进去，
-	// 否则「每关重置为关卡定量」会把刚发的奖励直接冲掉。
-	public static int pendingHint = 0;
-	public static int pendingRandom = 0;
 	public static int currentScore = 0;
 	public static int countPlayAgain = 0;
 	public static int maxLevel;
@@ -321,27 +317,20 @@ public class GameStatic : MonoBehaviour {
 		mapData = null;
 		if (currentMode == Const.GAME_MODE_HARD1) {
 			maxLevel = GameConfig.num_level_hard1;
-			currentHint = GameConfig.default_num_hint_hard1;
-			currentRandom = GameConfig.default_num_random_hard1;
 		} else if (currentMode == Const.GAME_MODE_HARD2) {
 			maxLevel = GameConfig.num_level_hard2;
-			currentHint = GameConfig.default_num_hint_hard2;
-			currentRandom = GameConfig.default_num_random_hard2;
 		} else {
 			maxLevel = GameConfig.num_level;
-			currentHint = GameConfig.default_num_hint_normal;
-			currentRandom = GameConfig.default_num_random_normal;
 		}
 		Save.saveLevel (1);
 		Save.saveScore (0);
 		Save.saveMapData("");
 		Save.saveGameMode (mode);
 		Save.setCountPlayAgain(0);
-		// 新开一局：清空上一局残留的关卡奖励
-		pendingHint = 0;
-		pendingRandom = 0;
-		ItemController.setHintItem (currentHint);
-		ItemController.setRandomItem (currentRandom);
+		// 道具属于账号：新开一局沿用存档里剩下的数量，不重置、不赠送。
+		// 想调新玩家的初始道具，改 GameConfig.num_item_hint_start / num_item_random_start。
+		currentHint = ItemController.getNumHintItem ();
+		currentRandom = ItemController.getNumRandomItem ();
 		SoundSystem.ins.play_music_back ();
 		return true;
 	}
@@ -482,17 +471,14 @@ public class GameStatic : MonoBehaviour {
 		countPlayAgain = 0;
 		mapData = null;
 		maxLevel = GameConfig.num_level_event;
-		currentHint = GameConfig.default_num_hint_event;
-		currentRandom = GameConfig.default_num_random_event;
 		Save.saveLevelEvent (1);
 		Save.saveScoreEvent (0);
 		Save.saveMapDataEvent("");
 		// Save.saveGameMode (mode);
 		Save.setCountPlayEventAgain(0);
-		pendingHint = 0;
-		pendingRandom = 0;
-		ItemController.setHintItem (currentHint);
-		ItemController.setRandomItem (currentRandom);
+		// 道具属于账号（活动模式是另一套 key，互不影响），直接读存档
+		currentHint = ItemController.getNumHintItem ();
+		currentRandom = ItemController.getNumRandomItem ();
 		SoundSystem.ins.play_music_back ();
 	}
 

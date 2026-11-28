@@ -24,6 +24,10 @@ public class Map : MonoBehaviour
 	public Vec2 POS2;
 	public Vec2 HINT_POS1;
 	public Vec2 HINT_POS2;
+	// 屏幕上当前正在高亮的那一对。用来避免「再点一次提示，扣了道具但画面没变化」
+	bool hintShown = false;
+	Vec2 hintShown1;
+	Vec2 hintShown2;
 	public Vector3[][] POS;
 	public static int MIN_X;
 	public static int MIN_Y;
@@ -953,17 +957,36 @@ public class Map : MonoBehaviour
 		POS2 = null;
 	}
 
+	/// <summary>
+	/// 提示。先确认这一关现在真的还有能消的对子，再扣道具。
+	/// 原来直接拿 list_pokemon_can_eat 的旧数据用：吃牌、自动补充之后列表会过期，
+	/// 可能提示到已经消不掉的位置，玩家看不到高亮，等于白扣一个提示。
+	/// </summary>
 	public void Hint(){
-		int count = list_pokemon_can_eat1.Count;
+		int count = getNumberPokemonCanEat ();
 		if (count == 0) {
+			ToastManager.showToast (StringUtils.no_hint_available);
 			return;
 		}
-		int r = Random.Range (0, count);
-		if (r == count) {
-			r = count - 1;
+
+		// 挑一对和屏幕上正在高亮的不同的；如果只剩这一对，就重放一次高亮、不再扣道具
+		int start = Random.Range (0, count);
+		int pick = -1;
+		for (int i = 0; i < count; i++) {
+			int idx = (start + i) % count;
+			if (isSameAsShownHint (idx))
+				continue;
+			pick = idx;
+			break;
 		}
-		HINT_POS1 = (Vec2)list_pokemon_can_eat1 [r];
-		HINT_POS2 = (Vec2)list_pokemon_can_eat2 [r];
+		if (pick < 0) {
+			playHintAnim (hintShown1, hintShown2);
+			return;
+		}
+
+		HINT_POS1 = (Vec2)list_pokemon_can_eat1 [pick];
+		HINT_POS2 = (Vec2)list_pokemon_can_eat2 [pick];
+
         if (!isTutorial)
         {
             if (!hintController.useHintItem() && !GameConfig.DEBUG_KEY)
@@ -976,23 +999,40 @@ public class Map : MonoBehaviour
 			Select (HINT_POS2);
 			return;
 		}
-		GameObject pokemon = null;
-		if (HINT_POS1 != null) {
-			pokemon = getPokemon (HINT_POS1.R, HINT_POS1.C);
-		}
-		if (pokemon != null) {
-			pokemon.GetComponent<Pokemon>().Hint();
-		}
-		if (HINT_POS2 != null) {
-			pokemon = getPokemon(HINT_POS2.R, HINT_POS2.C);
-		}
-		if (pokemon != null) {
-			pokemon.GetComponent<Pokemon>().Hint();
-		}
 
+		hintShown = true;
+		hintShown1 = HINT_POS1;
+		hintShown2 = HINT_POS2;
+		playHintAnim (HINT_POS1, HINT_POS2);
+	}
+
+	bool isSameAsShownHint(int idx) {
+		if (!hintShown || hintShown1 == null || hintShown2 == null)
+			return false;
+		Vec2 p1 = (Vec2)list_pokemon_can_eat1 [idx];
+		Vec2 p2 = (Vec2)list_pokemon_can_eat2 [idx];
+		return p1.R == hintShown1.R && p1.C == hintShown1.C
+			&& p2.R == hintShown2.R && p2.C == hintShown2.C;
+	}
+
+	void playHintAnim(Vec2 p1, Vec2 p2) {
+		GameObject pokemon = null;
+		if (p1 != null) {
+			pokemon = getPokemon (p1.R, p1.C);
+		}
+		if (pokemon != null) {
+			pokemon.GetComponent<Pokemon>().Hint();
+		}
+		if (p2 != null) {
+			pokemon = getPokemon (p2.R, p2.C);
+		}
+		if (pokemon != null) {
+			pokemon.GetComponent<Pokemon>().Hint();
+		}
 	}
 
 	void RemoveHint(){
+		hintShown = false;
 		GameObject pokemon = null;
 		if (HINT_POS1 != null) {
 			pokemon = getPokemon (HINT_POS1.R, HINT_POS1.C);

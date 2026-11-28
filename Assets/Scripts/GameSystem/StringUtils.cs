@@ -111,6 +111,7 @@ public class StringUtils : MonoBehaviour{
 	public static string loading_online_prepare_map = "初始化地图...";
 	public static string not_enough_energy = "体力不足！请等待恢复或前往商店。";
 	public static string not_enough_item = "道具不足！";
+	public static string no_hint_available = "暂时没有可以提示的组合";
 	public static string time_over = "时间到！";
 	public static string can_not_eat_ice = "冰块已经无法再消除了！";
 	public static string out_of_game_pause_reason = "中途退出游戏，本局判负，抱歉。";

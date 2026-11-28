@@ -317,24 +317,20 @@ public class GameStatic : MonoBehaviour {
 		mapData = null;
 		if (currentMode == Const.GAME_MODE_HARD1) {
 			maxLevel = GameConfig.num_level_hard1;
-			currentHint = GameConfig.default_num_hint_hard1;
-			currentRandom = GameConfig.default_num_random_hard1;
 		} else if (currentMode == Const.GAME_MODE_HARD2) {
 			maxLevel = GameConfig.num_level_hard2;
-			currentHint = GameConfig.default_num_hint_hard2;
-			currentRandom = GameConfig.default_num_random_hard2;
 		} else {
 			maxLevel = GameConfig.num_level;
-			currentHint = GameConfig.default_num_hint_normal;
-			currentRandom = GameConfig.default_num_random_normal;
 		}
 		Save.saveLevel (1);
 		Save.saveScore (0);
 		Save.saveMapData("");
 		Save.saveGameMode (mode);
 		Save.setCountPlayAgain(0);
-		ItemController.setHintItem (currentHint);
-		ItemController.setRandomItem (currentRandom);
+		// 道具属于账号：新开一局沿用存档里剩下的数量，不重置、不赠送。
+		// 想调新玩家的初始道具，改 GameConfig.num_item_hint_start / num_item_random_start。
+		currentHint = ItemController.getNumHintItem ();
+		currentRandom = ItemController.getNumRandomItem ();
 		SoundSystem.ins.play_music_back ();
 		return true;
 	}
@@ -446,15 +442,16 @@ public class GameStatic : MonoBehaviour {
 	}
 
 	public static void saveGameRegularForReplay() {
-		currentHint += GameConfig.num_hint_bonus;
-		currentRandom += GameConfig.num_random_bonus;
+		// 复活补偿直接加进当前关的道具池：Replay() 是原地重建地图、不重算关卡定量，所以加完就生效
+		ItemController.addHintItem (GameConfig.num_hint_bonus);
+		ItemController.addRandomItem (GameConfig.num_random_bonus);
+		currentHint = ItemController.getNumHintItem ();
+		currentRandom = ItemController.getNumRandomItem ();
 		countPlayAgain++;
 		Save.saveLevel (currentLevel);
 		Save.saveScore (currentScore);
 		Save.saveMapData ("");
 		Save.setCountPlayAgain(countPlayAgain);
-		ItemController.setHintItem (currentHint);
-		ItemController.setRandomItem (currentRandom);
 		mapData = null;
 	}
 
@@ -474,15 +471,14 @@ public class GameStatic : MonoBehaviour {
 		countPlayAgain = 0;
 		mapData = null;
 		maxLevel = GameConfig.num_level_event;
-		currentHint = GameConfig.default_num_hint_event;
-		currentRandom = GameConfig.default_num_random_event;
 		Save.saveLevelEvent (1);
 		Save.saveScoreEvent (0);
 		Save.saveMapDataEvent("");
 		// Save.saveGameMode (mode);
 		Save.setCountPlayEventAgain(0);
-		ItemController.setHintItem (currentHint);
-		ItemController.setRandomItem (currentRandom);
+		// 道具属于账号（活动模式是另一套 key，互不影响），直接读存档
+		currentHint = ItemController.getNumHintItem ();
+		currentRandom = ItemController.getNumRandomItem ();
 		SoundSystem.ins.play_music_back ();
 	}
 
@@ -562,15 +558,15 @@ public class GameStatic : MonoBehaviour {
 	}
 
 	public static void saveGameEventForReplay() {
-		currentHint += GameConfig.num_hint_bonus;
-		currentRandom += GameConfig.num_random_bonus;
+		ItemController.addHintItem (GameConfig.num_hint_bonus);
+		ItemController.addRandomItem (GameConfig.num_random_bonus);
+		currentHint = ItemController.getNumHintItem ();
+		currentRandom = ItemController.getNumRandomItem ();
 		countPlayAgain++;
 		Save.saveLevelEvent (currentLevel);
 		Save.saveScoreEvent (currentScore);
 		Save.saveMapDataEvent ("");
 		Save.setCountPlayEventAgain(countPlayAgain);
-		ItemController.setHintItem (currentHint);
-		ItemController.setRandomItem (currentRandom);
 		mapData = null;
 	}
 

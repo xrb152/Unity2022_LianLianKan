@@ -9,16 +9,11 @@ public class GameConfig {
 	//==========Server load==========//
 	public static int num_level_event = 10; //So luong level cua che do event
     public static int[] list_level_event = { 1, 3, 5, 7, 9, 20, 22, 25, 30, 32 }; //Danh sach level cho vao che do event
-    public static int default_num_hint_normal = 5; // So luong goi y cho level thuong
-	public static int default_num_hint_hard1  = 8;	// So luong goi y cho level hard1
-	public static int default_num_hint_hard2  = 10;	// So luong goi y cho level hard2
-	public static int default_num_hint_event  = 10;	// So luong goi y cho level event
-	public static int default_num_random_normal = 5; //Tuong tu cho so luong random lai map
-	public static int default_num_random_hard1  = 8;
-	public static int default_num_random_hard2  = 10;
-	public static int default_num_random_event  = 10;
 	public static int num_hint_bonus = 10;
 	public static int num_random_bonus = 10;
+
+	// 道具属于账号（存在 PlayerPrefs 里），开局不再按难度发放，所以原来那组
+	// default_num_hint_* / default_num_random_* 已删除。新玩家的初始数量见 num_item_hint_start 等。
 	public static int num_coin_recover_life_base = 5; //So luong coin nho nhat dung de hoi sinh sau khi thua
 	public static int probability_ads_visible = 100;
 	public static int small_count = 20;	//So luong coin ban trong store cho cac goi

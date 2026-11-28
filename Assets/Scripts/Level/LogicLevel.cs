@@ -119,6 +119,7 @@ public class LogicLevel : MonoBehaviour {
 			RewardData reward = (RewardData) levelData.list_reward [i];
 			if (reward.type == Const.REWARD_HINT) {
 				int reward_hint = reward.getReward (star);
+				// 道具是账号资源，奖励直接加到存档里，下一关接着用
 				ItemController.addHintItem (reward_hint);
 				if (resultBar) {
 					resultBar.txtHint.text = "+" + reward_hint;

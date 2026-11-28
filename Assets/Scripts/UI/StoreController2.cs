@@ -2,8 +2,9 @@
 using UnityEngine.UI;
 
 /// <summary>
-/// 商店面板：用钻石（HUD 右上角）购买关卡道具。
+/// 商店面板：用钻石（HUD 右上角）购买账号道具。
 /// 三张卡分别对应 提示 / 洗牌 / 体力，价格和数量都在 Inspector 里可调。
+/// 道具是账号资源（PlayerPrefs），买了永久累积、开局不重置，所以提示和洗牌都可以卖。
 /// 钻石余额沿用 Save.getPlayerCoin()（这个值就是右上角 RubyInfo 显示的数字）。
 /// </summary>
 public class StoreController2 : MonoBehaviour
